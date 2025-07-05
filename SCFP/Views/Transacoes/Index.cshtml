@@ -1,0 +1,33 @@
+﻿@model IEnumerable<SCFP.Models.Transacao>
+
+<h2>Transações</h2>
+
+<a asp-action="Create" class="btn btn-primary">Nova Transação</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Categoria</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Data.ToShortDateString()</td>
+                <td>@item.Descricao</td>
+                <td>R$ @item.Valor</td>
+                <td>@item.Categoria?.Nome</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

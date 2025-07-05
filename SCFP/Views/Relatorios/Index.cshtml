@@ -1,0 +1,132 @@
+﻿@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Relatórios";
+    var nomeUsuario = ViewBag.NomeUsuario ?? "Usuário";
+    var dataAtual = DateTime.Now.ToString("dd/MM/yyyy");
+}
+
+<div class="container mt-4" id="relatorioContainer">
+    <h2 class="mb-1 text-center">📊 Relatório Financeiro</h2>
+    <p class="text-center">Usuário: <strong>@nomeUsuario</strong> | Data: <strong>@dataAtual</strong></p>
+
+    <form method="get" asp-controller="Relatorios" asp-action="Index" class="row g-3">
+        <div class="col-md-4">
+            <label for="mes" class="form-label">Mês</label>
+            <select name="mes" id="mes" class="form-select">
+                <option value="">Todos</option>
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="dataInicio" class="form-label">Data Início</label>
+            <input type="date" name="dataInicio" id="dataInicio" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+            <label for="dataFim" class="form-label">Data Fim</label>
+            <input type="date" name="dataFim" id="dataFim" class="form-control" />
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </form>
+
+    <hr class="my-4" />
+
+    <div class="row">
+        <div class="col-md-6 mb-4 text-center">
+            <h5>Entradas vs Saídas</h5>
+            <canvas id="graficoEntradasSaidas" style="max-width: 400px; height: 250px;"></canvas><br />
+
+            <!-- Botão para baixar gráfico como imagem PNG -->
+            <button class="btn btn-outline-secondary mt-2" onclick="baixarImagem('graficoEntradasSaidas', 'entradas_vs_saidas')">
+                Baixar Imagem
+            </button>
+        </div>
+
+        <div class="col-md-6 mb-4 text-center">
+            <h5>Despesas por Categoria</h5>
+            <canvas id="graficoPorCategoria" style="max-width: 400px; height: 250px;"></canvas><br />
+
+            <!-- Botão para baixar gráfico como imagem PNG -->
+            <button class="btn btn-outline-secondary mt-2" onclick="baixarImagem('graficoPorCategoria', 'por_categoria')">
+                Baixar Imagem
+            </button>
+        </div>
+    </div>
+
+    <!-- Botão para gerar PDF personalizado -->
+    <div class="text-center mt-3">
+        <button class="btn btn-outline-danger" onclick="baixarPDF()">Baixar Relatório em PDF</button>
+    </div>
+</div>
+
+<!-- Bibliotecas necessárias -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+<script>
+    const totalEntradas = parseFloat('@ViewBag.TotalEntradas' || '0');
+    const totalSaidas = parseFloat('@ViewBag.TotalSaidas' || '0');
+
+    const dadosCategoria = @Html.Raw(JsonConvert.SerializeObject(ViewBag.DadosCategoria ?? new List<object>()));
+    const categorias = dadosCategoria.map(x => x.Categoria);
+    const valores = dadosCategoria.map(x => x.Total);
+
+    // Gráfico de barras: Entradas vs Saídas
+    new Chart(document.getElementById('graficoEntradasSaidas').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Entradas', 'Saídas'],
+            datasets: [{
+                label: 'Valor (R$)',
+                data: [totalEntradas, totalSaidas],
+                backgroundColor: ['#4caf50', '#f44336']
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // Gráfico de pizza: Despesas por Categoria
+    new Chart(document.getElementById('graficoPorCategoria').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: categorias,
+            datasets: [{
+                data: valores,
+                backgroundColor: [
+                    '#ff6384', '#36a2eb', '#ffcd56',
+                    '#4bc0c0', '#9966ff', '#ff9f40'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // 👉 Função para baixar uma imagem PNG do gráfico
+    function baixarImagem(canvasId, nomeArquivo) {
+        const canvas = document.getElementById(canvasId);
+        const imagem = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = nomeArquivo + '.png';
+        link.href = imagem;
+        link.click();
+    }
+
+    // 👉 Função para baixar o relatório completo como PDF
+    function baixarPDF() {
+        const element = document.getElementById('relatorioContainer');
+        html2pdf().from(element).save('relatorio-financeiro.pdf');
+    }
+</script>

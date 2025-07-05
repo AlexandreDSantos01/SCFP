@@ -1,0 +1,43 @@
+﻿@model List<SCFP.Models.Transacao>
+
+@{
+    ViewData["Title"] = "Resumo Mensal";
+    var totalEntradas = ViewBag.TotalEntradas as decimal? ?? 0;
+    var totalSaidas = ViewBag.TotalSaidas as decimal? ?? 0;
+}
+
+<h2>Resumo Mensal</h2>
+
+<div class="mb-4">
+    <h4>Total de Entradas: <span class="text-success">@totalEntradas.ToString("C")</span></h4>
+    <h4>Total de Saídas: <span class="text-danger">@totalSaidas.ToString("C")</span></h4>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Tipo</th>
+            <th>Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Data.ToString("dd/MM/yyyy")</td>
+                <td>@item.Descricao</td>
+                <td>@item.Categoria?.Nome</td>
+                <td>@item.Tipo.ToString()</td>
+                <td class="@(item.Tipo == SCFP.Models.TipoTransacao.Entrada ? "text-success" : "text-danger")">
+                    @item.Valor.ToString("C")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<a asp-action="Index" class="btn btn-secondary">Voltar</a>
