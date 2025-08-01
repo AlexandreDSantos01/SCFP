@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SCFP.Data;
 using SCFP.Models;
+using SCFP.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,13 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login"; // Caminho correto para sua tela de login
 });
+
+// 👉 Adicionando o serviço de envio de e-mail (EmailSender)
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<EmailSender>();
+
+
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

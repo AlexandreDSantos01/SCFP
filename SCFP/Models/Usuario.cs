@@ -7,6 +7,7 @@ namespace SCFP.Models
     {
         public string Nome { get; set; }
         public bool Autenticacao2F { get; set; }
+        public string? FotoPerfil { get; set; }
 
 
         public ICollection<Categoria> Categorias { get; set; }

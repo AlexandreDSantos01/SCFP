@@ -8,14 +8,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SCFP</title>
-    <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SCFP.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
 <body>
-
+    <div style="padding-top: 70px;"></div>
     @{
         string nomeUsuario = null;
         if (SignInManager.IsSignedIn(User))
@@ -26,74 +26,150 @@
     }
 
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow fixed-top navbar-custom">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SCFP</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <!-- LOGO COM IMAGEM -->
+                <a class="navbar-brand fw-bold d-flex align-items-center" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/MMeioaAF_02.png" alt="Logo SCFP" width="32" height="32" class="me-2 rounded" />
+                    SCFP
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
 
-                        <ul class="navbar-nav">
-                            @if (SignInManager.IsSignedIn(User))
-                            {
-                                <li class="nav-item">
-                                    <span class="nav-link text-dark">Olá, @nomeUsuario!</span>
-                                </li>
-                                <li class="nav-item">
-                                    <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
-                                        <button type="submit" class="btn btn-link nav-link text-dark">Sair</button>
-                                    </form>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Entrar</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Account" asp-action="Registrar">Registrar</a>
-                                </li>
-                            }
-                        </ul>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-money-check-dollar me-1"></i>Financeiro
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Transacoes" asp-action="Index">Transações</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Categorias" asp-action="Index">Categorias</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Transacoes" asp-action="ResumoMensal">Resumo Mensal</a></li>
+                                </ul>
+                            </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Transacoes" asp-action="Index">Transações</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Categorias" asp-action="Index">Categorias</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Transacoes" asp-action="ResumoMensal">Resumo Mensal</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Relatorios" asp-action="Index">Relatórios</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Relatorios" asp-action="Index">
+                                    <i class="fa-solid fa-chart-pie me-1"></i>Relatórios
+                                </a>
+                            </li>
 
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-brain me-1"></i>Produtividade
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Planejamento" asp-action="Semana">
+                                            <i class="fa-regular fa-calendar-check me-1"></i>Organização Diária
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
+                </div>
+
+                </div>
+
+
+                    <!-- BOTÃO MODO ESCURO -->
+
+                    <button class="btn btn-sm btn-outline-light me-3" id="modoToggle">
+                        <i class="fa-solid fa-circle-half-stroke me-1"></i>Modo
+                    </button>
+
+                    <!-- DROPDOWN DO USUÁRIO -->
+                    
+                    <ul class="navbar-nav">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            var fotoPerfilUrl = "/images/default-profile.png";
+                            var user = await UserManager.GetUserAsync(User);
+                            if (user != null && !string.IsNullOrEmpty(user.FotoPerfil))
+                            {
+                                fotoPerfilUrl = Url.Content($"~/uploads/{user.FotoPerfil}");
+                            }
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" data-bs-toggle="dropdown" role="button" aria-expanded="false">
+                                    <img src="@fotoPerfilUrl" alt="Foto Perfil" class="rounded-circle navbar-profile-img me-2" />
+                                    @nomeUsuario
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="Perfil">
+                                            <i class="fa-solid fa-user-gear me-1"></i>Meu Perfil
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post">
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="fa-solid fa-right-from-bracket me-1"></i>Sair
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light btn-sm me-2" asp-controller="Account" asp-action="Login">
+                                    <i class="fa-solid fa-right-to-bracket me-1"></i>Entrar
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary btn-sm" asp-controller="Account" asp-action="Registrar">
+                                    <i class="fa-solid fa-user-plus me-1"></i>Registrar
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
                 </div>
             </div>
         </nav>
+
+
     </header>
 
-    <div class="container">
+    <div class="container mt-3">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - SCFP - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top footer text-muted mt-5">
+        <div class="container text-center">
+            &copy; 2025 - SCFP - <a asp-area="" asp-controller="Home" asp-action="Privacy">Política de Privacidade</a>
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
 
+    <script>
+        document.getElementById("modoToggle").addEventListener("click", function () {
+            document.body.classList.toggle("dark-mode");
+            localStorage.setItem("modo", document.body.classList.contains("dark-mode") ? "escuro" : "claro");
+        });
+
+        window.addEventListener("DOMContentLoaded", () => {
+            if (localStorage.getItem("modo") === "escuro") {
+                document.body.classList.add("dark-mode");
+            }
+        });
+    </script>
+
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

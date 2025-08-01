@@ -1,0 +1,61 @@
+﻿@model SCFP.ViewModels.PerfilViewModel
+@{
+    ViewData["Title"] = "Meu Perfil";
+}
+
+<h2 class="mb-4">Meu Perfil</h2>
+
+@if (ViewData["Mensagem"] != null)
+{
+    <div class="alert alert-success">@ViewData["Mensagem"]</div>
+}
+
+<form asp-action="Perfil" method="post" enctype="multipart/form-data">
+
+    <div class="mb-3">
+        <label asp-for="Nome" class="form-label"></label>
+        <input asp-for="Nome" class="form-control" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Foto Atual</label><br />
+        <img src="@Model.FotoPerfilUrl" alt="Foto de Perfil" class="img-thumbnail" style="max-width: 150px;" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FotoPerfilArquivo" class="form-label"></label>
+        <input asp-for="FotoPerfilArquivo" type="file" class="form-control" />
+        <span asp-validation-for="FotoPerfilArquivo" class="text-danger"></span>
+    </div>
+
+    <hr />
+
+    <h5>Alterar Senha (opcional)</h5>
+
+    <div class="mb-3">
+        <label asp-for="NovaSenha" class="form-label"></label>
+        <input asp-for="NovaSenha" class="form-control" />
+        <span asp-validation-for="NovaSenha" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ConfirmarNovaSenha" class="form-label"></label>
+        <input asp-for="ConfirmarNovaSenha" class="form-control" />
+        <span asp-validation-for="ConfirmarNovaSenha" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-save me-1"></i> Salvar Alterações
+    </button>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
