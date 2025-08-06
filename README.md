@@ -46,16 +46,6 @@ O **SCFP** é um sistema desenvolvido para auxiliar pessoas no controle das fina
 
 ---
 
-### 👥 Equipe Scrum
-
-- Alexandre Dos Santos Pinto / **Product Owner**
-- Sayumi Nozaki Silva / **Scrum Master**
-- Vinícius Gabriel M. Souza / **Scrum Team**
-- Gustavo Henrique O.P. Domingues / **Scrum Team**
-- Matheus Alves Pimenta / **Scrum Team**
-
----
-
 ### 📅 Cronograma de Desenvolvimento
 
 #### ✅ Semana 1: Planejamento e Estrutura Inicial
@@ -97,5 +87,7 @@ O **SCFP** é um sistema desenvolvido para auxiliar pessoas no controle das fina
 - Publicar na nuvem (ex: Azure ou Railway)
 
 ---
+
+
 
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&color=00FF00&height=120&section=footer"/>
